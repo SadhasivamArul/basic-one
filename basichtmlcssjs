@@ -1,0 +1,94 @@
+html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="new.css">
+</head>
+<body>
+
+<div class="container">
+    <h3>Student Registration</h3>
+
+    <form id="studentForm">
+        <input type="text" id="studentName" placeholder="Enter Student Name">
+        <p id="error"></p>
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+<script src="new.js"></script>
+</body>
+</html>
+
+css
+
+body {
+    font-family: Arial;
+    background-color: #f2f2f2;
+}
+
+.container {
+    width: 300px;
+    margin: 100px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+#error {
+    color: red;
+    font-size: 14px;
+}
+
+js
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    var form = document.getElementById("studentForm");
+    var input = document.getElementById("studentName");
+    var error = document.getElementById("error");
+
+    // Restrict typing (remove numbers & symbols while typing)
+    input.addEventListener("input", function () {
+        this.value = this.value.replace(/[^A-Za-z ]/g, "");
+    });
+
+    // Validate on submit
+    form.addEventListener("submit", function (e) {
+
+        var name = input.value.trim();
+
+        // Empty check
+        if (name === "") {
+            error.innerText = "Student name is required";
+            e.preventDefault();
+            return;
+        }
+
+        // Only letters and single space between words
+        if (!/^[A-Za-z]+( [A-Za-z]+)*$/.test(name)) {
+            error.innerText = "Only letters allowed";
+            e.preventDefault();
+            return;
+        }
+
+        error.innerText = "";
+        alert("Registered Successfully");
+    });
+
+});
+
