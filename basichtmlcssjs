@@ -4,6 +4,7 @@ html code
 <html>
 <head>
     <title>Student Registration</title>
+    <link rel="icon" href="https://www.google.com/imgres?q=student%20icon%20png&imgurl=https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F5850%2F5850276.png&imgrefurl=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fstudent_5850276&docid=uawHtPJCLvZjrM&tbnid=veuAE3EsfhMzxM&vet=12ahUKEwiNofDFvuKSAxUuTmwGHRmvGYoQnPAOegQIGBAB..i&w=512&h=512&hcb=2&ved=2ahUKEwiNofDFvuKSAxUuTmwGHRmvGYoQnPAOegQIGBAB">
     <link rel="stylesheet" href="new.css">
 </head>
 <body>
@@ -33,7 +34,8 @@ html code
 </body>
 </html>
 
-css code
+css
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
@@ -89,21 +91,48 @@ input.error-border {
 
 js code
 
+
 window.onload = function () {
-    var form = document.getElementById("studentForm");
     var regInput = document.getElementById("RegisterNumber");
     var nameInput = document.getElementById("StudentName");
+    var form = document.getElementById("studentForm");
 
     var regError = document.getElementById("regError");
     var nameError = document.getElementById("nameError");
 
-    // Prevent moving to Name if Register Number is empty
+    // 🔹 Keyboard shortcuts with Alt key
+    document.addEventListener("keydown", function (e) {
+        if (e.altKey && (e.key === "r" || e.key === "R")) {
+            e.preventDefault(); // prevent default browser behavior
+            regInput.focus();
+        }
+
+        if (e.altKey && (e.key === "s" || e.key === "S")) {
+            e.preventDefault();
+            var regVal = regInput.value.trim();
+
+            // Cannot move to Student Name if Register Number invalid
+            if (regVal === "" || isNaN(regVal)) {
+                regError.textContent = regVal === "" 
+                    ? "Please enter Register Number first"
+                    : "Register Number must contain numbers only";
+                regInput.classList.add("error-border");
+                regInput.focus();
+            } else {
+                regError.textContent = "";
+                regInput.classList.remove("error-border");
+                nameInput.focus();
+            }
+        }
+    });
+
+    // 🔹 Prevent mouse focus on Name if Register Number invalid
     nameInput.addEventListener("focus", function (e) {
         var regVal = regInput.value.trim();
         if (regVal === "" || isNaN(regVal)) {
-            e.preventDefault(); // stop focus
+            e.preventDefault();
             regError.textContent = regVal === "" 
-                ? "Please enter Register Number first" 
+                ? "Please enter Register Number first"
                 : "Register Number must contain numbers only";
             regInput.classList.add("error-border");
             regInput.focus();
@@ -113,48 +142,49 @@ window.onload = function () {
         }
     });
 
+    // 🔹 Form submit validation
     form.onsubmit = function () {
-        var Reg_number = regInput.value.trim();
-        var student_name = nameInput.value.trim();
+        var regVal = regInput.value.trim();
+        var nameVal = nameInput.value.trim();
 
         // Clear previous errors
         regError.textContent = "";
         nameError.textContent = "";
+        regInput.classList.remove("error-border");
+        nameInput.classList.remove("error-border");
 
-        // Check Register Number empty
-        if (Reg_number === "") {
+        // Register Number validation
+        if (regVal === "") {
             regError.textContent = "Please enter Register Number";
+            regInput.classList.add("error-border");
+            regInput.focus();
+            return false;
+        }
+        if (isNaN(regVal)) {
+            regError.textContent = "Register Number must contain numbers only";
+            regInput.classList.add("error-border");
             regInput.focus();
             return false;
         }
 
-        // Check Register Number only numbers
-        if (isNaN(Reg_number)) {
-             alert("Register number should contain numbers only:"+Reg_number+"\n Example:123456789");
-            regError.textContent = "Register number should contain numbers only";
-            regInput.focus();
-            return false;
-        }
-
-        // Check Student Name empty
-        if (student_name === "") {
+        // Student Name validation
+        if (nameVal === "") {
             nameError.textContent = "Please enter Student Name";
+            nameInput.classList.add("error-border");
             nameInput.focus();
             return false;
         }
-
-        // Check Name does not contain numbers
-        for (var i = 0; i < student_name.length; i++) {
-            if (!isNaN(student_name[i]) && student_name[i] !== " ") {
-                alert("Name should not contain numbers:"+student_name+"\n Example:Sadhasivam");
+        for (var i = 0; i < nameVal.length; i++) {
+            if (!isNaN(nameVal[i]) && nameVal[i] !== " ") {
                 nameError.textContent = "Name should not contain numbers";
+                nameInput.classList.add("error-border");
                 nameInput.focus();
                 return false;
             }
         }
 
         alert("Registered Successfully");
-        return false; // Remove if submitting to backend
+        return false;
     };
 };
 
