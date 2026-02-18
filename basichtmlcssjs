@@ -1,4 +1,4 @@
-html
+html code
 
 <!DOCTYPE html>
 <html>
@@ -9,86 +9,152 @@ html
 <body>
 
 <div class="container">
-    <h3>Student Registration</h3>
+    <h2>Student Registration Form</h2>
 
     <form id="studentForm">
-        <input type="text" id="studentName" placeholder="Enter Student Name">
-        <p id="error"></p>
-        <button type="submit">Register</button>
+
+        <label>Register Number:</label>
+        <input type="text" id="RegisterNumber" name="reg_number" placeholder="Enter register number">
+        <span class="error-message" id="regError"></span>
+
+        <label>Student Name:</label>
+        <input type="text" id="StudentName" name="student_name" placeholder="Enter your name">
+        <span class="error-message" id="nameError"></span>
+
+        <div class="buttons">
+            <input type="submit" value="Register">
+        </div>
+
     </form>
 </div>
 
 <script src="new.js"></script>
+
 </body>
 </html>
 
-css
-
+css code
 body {
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background-color: #f2f2f2;
 }
 
 .container {
-    width: 300px;
-    margin: 100px auto;
+    width: 400px;
+    margin: 50px auto;
+    padding: 25px;
     background: white;
-    padding: 20px;
-    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+h2 {
     text-align: center;
 }
 
-input {
-    width: 90%;
-    padding: 8px;
-    margin: 10px 0;
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
 }
 
-button {
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+}
+
+input[type="submit"] {
+    margin-top: 15px;
     padding: 8px 15px;
+    background-color: blue;
+    color: white;
+    border: none;
     cursor: pointer;
 }
 
-#error {
-    color: red;
-    font-size: 14px;
+input[type="submit"]:hover {
+    background-color: darkblue;
 }
 
-js
+.error-message {
+    color: red;
+    font-size: 13px;
+    margin-top: 3px;
+    display: block;
+}
+input.error-border {
+    border: 2px solid red;
+}
 
-document.addEventListener("DOMContentLoaded", function () {
+js code
 
+window.onload = function () {
     var form = document.getElementById("studentForm");
-    var input = document.getElementById("studentName");
-    var error = document.getElementById("error");
+    var regInput = document.getElementById("RegisterNumber");
+    var nameInput = document.getElementById("StudentName");
 
-    // Restrict typing (remove numbers & symbols while typing)
-    input.addEventListener("input", function () {
-        this.value = this.value.replace(/[^A-Za-z ]/g, "");
+    var regError = document.getElementById("regError");
+    var nameError = document.getElementById("nameError");
+
+    // Prevent moving to Name if Register Number is empty
+    nameInput.addEventListener("focus", function (e) {
+        var regVal = regInput.value.trim();
+        if (regVal === "" || isNaN(regVal)) {
+            e.preventDefault(); // stop focus
+            regError.textContent = regVal === "" 
+                ? "Please enter Register Number first" 
+                : "Register Number must contain numbers only";
+            regInput.classList.add("error-border");
+            regInput.focus();
+        } else {
+            regError.textContent = "";
+            regInput.classList.remove("error-border");
+        }
     });
 
-    // Validate on submit
-    form.addEventListener("submit", function (e) {
+    form.onsubmit = function () {
+        var Reg_number = regInput.value.trim();
+        var student_name = nameInput.value.trim();
 
-        var name = input.value.trim();
+        // Clear previous errors
+        regError.textContent = "";
+        nameError.textContent = "";
 
-        // Empty check
-        if (name === "") {
-            error.innerText = "Student name is required";
-            e.preventDefault();
-            return;
+        // Check Register Number empty
+        if (Reg_number === "") {
+            regError.textContent = "Please enter Register Number";
+            regInput.focus();
+            return false;
         }
 
-        // Only letters and single space between words
-        if (!/^[A-Za-z]+( [A-Za-z]+)*$/.test(name)) {
-            error.innerText = "Only letters allowed";
-            e.preventDefault();
-            return;
+        // Check Register Number only numbers
+        if (isNaN(Reg_number)) {
+             alert("Register number should contain numbers only:"+Reg_number+"\n Example:123456789");
+            regError.textContent = "Register number should contain numbers only";
+            regInput.focus();
+            return false;
         }
 
-        error.innerText = "";
+        // Check Student Name empty
+        if (student_name === "") {
+            nameError.textContent = "Please enter Student Name";
+            nameInput.focus();
+            return false;
+        }
+
+        // Check Name does not contain numbers
+        for (var i = 0; i < student_name.length; i++) {
+            if (!isNaN(student_name[i]) && student_name[i] !== " ") {
+                alert("Name should not contain numbers:"+student_name+"\n Example:Sadhasivam");
+                nameError.textContent = "Name should not contain numbers";
+                nameInput.focus();
+                return false;
+            }
+        }
+
         alert("Registered Successfully");
-    });
-
-});
+        return false; // Remove if submitting to backend
+    };
+};
 
